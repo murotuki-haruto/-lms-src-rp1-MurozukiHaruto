@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
+<html xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
 <head>
 <meta charset="UTF-8">
@@ -59,7 +59,7 @@
 				<tbody class="db">
 					<th:block th:each="attendanceManagementDto : ${attendanceManagementDtoList}" th:object="${attendanceManagementDto}">
 						<tr>
-							<td class="w160">[[*{#dates.format(trainingDate, 'yyyy年M月d日(E)')}]]</td>
+							<td class="w160">[[*{#dates.format(trainingDate,'yyyy年M月d日(E)')}]]</td>
 							<td class="w260">[[*{sectionName}]]</td>
 							<td class="w80">[[*{trainingStartTime}]]</td>
 							<td class="w80">[[*{trainingEndTime}]]</td>
@@ -75,13 +75,23 @@
 
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
-			$("#now").text('現在の時刻は　' + getClock() + '　です。');
+			$("#now").text('現在の時刻は ' + getClock() + ' です。');
+
 			setInterval(function() {
-				$("#now").text('現在の時刻は　' + getClock() + '　です。');
+				$("#now").text('現在の時刻は ' + getClock() + ' です。');
 			}, 1000);
+
+			// Task.25
+			// 過去日未入力確認ダイアログ
+			var isUnfilledPast = /*[[${isUnfilledPast}]]*/ false;
+
+			if (isUnfilledPast) {
+				alert("過去日の勤怠に未入力があります。");
+			}
 		});
+
 		function getClock() {
-			const today =  new Date();
+			const today = new Date();
 			const hours = ('0' + today.getHours()).slice(-2);
 			const minutes = ('0' + today.getMinutes()).slice(-2);
 			return hours + ':' + minutes;

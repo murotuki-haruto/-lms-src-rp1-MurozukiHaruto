@@ -1,47 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="jp.co.sss.lms.mapper.TStudentAttendanceMapper">
 
-	<select id="findByLmsUserId" resultType="jp.co.sss.lms.entity.TStudentAttendance">
-		SELECT * 
-		FROM t_student_attendance
-		WHERE lms_user_id = #{lmsUserId} 
-			AND delete_flg = #{deleteFlg} 
-		ORDER BY training_date ASC
-	</select>
 
-	<select id="findByLmsUserIdAndTrainingDate" resultType="jp.co.sss.lms.entity.TStudentAttendance">
-		SELECT * 
+	<select id="findByLmsUserId"
+		resultType="jp.co.sss.lms.entity.TStudentAttendance">
+
+		SELECT *
 		FROM t_student_attendance
-		WHERE lms_user_id = #{lmsUserId} 
-			AND training_date = #{trainingDate} 
+		WHERE lms_user_id = #{lmsUserId}
 			AND delete_flg = #{deleteFlg}
+		ORDER BY training_date ASC
+
 	</select>
 
-	<select id="getAttendanceManagement" resultType="jp.co.sss.lms.dto.AttendanceManagementDto">
+
+	<select id="findByLmsUserIdAndTrainingDate"
+		resultType="jp.co.sss.lms.entity.TStudentAttendance">
+
+		SELECT *
+		FROM t_student_attendance
+		WHERE lms_user_id = #{lmsUserId}
+			AND training_date = #{trainingDate}
+			AND delete_flg = #{deleteFlg}
+
+	</select>
+
+
+	<select id="getAttendanceManagement"
+		resultType="jp.co.sss.lms.dto.AttendanceManagementDto">
+
 		SELECT
 			(cast(t2.date AS DATE) = current_date) AS is_today,
 			t2.section_name,
 			t3.student_attendance_id,
 			t3.lms_user_id,
-			t2.date AS
-			training_date,
+			t2.date AS training_date,
 			t3.training_start_time,
 			t3.training_end_time,
 			t3.status,
 			t3.note,
 			t3.blank_time
+
 		FROM m_course t1
-			INNER JOIN m_section t2 ON t1.course_id = t2.course_id
-			LEFT OUTER JOIN t_student_attendance t3 ON t3.lms_user_id = #{lmsUserId} AND cast(t2.date AS DATE) = cast(t3.training_date AS DATE)
-		WHERE t1.course_id = #{courseId} 
+
+		INNER JOIN m_section t2
+			ON t1.course_id = t2.course_id
+
+		LEFT OUTER JOIN t_student_attendance t3
+			ON t3.lms_user_id = #{lmsUserId}
+			AND cast(t2.date AS DATE)
+				= cast(t3.training_date AS DATE)
+
+		WHERE t1.course_id = #{courseId}
 			AND t1.delete_flg = #{deleteFlg}
+
 		ORDER BY t2.date ASC
+
 	</select>
 
-	<insert id="insert" parameterType="jp.co.sss.lms.entity.TStudentAttendance" useGeneratedKeys="true" keyProperty="studentAttendanceId">
-		INSERT INTO t_student_attendance 
+
+	<!-- Task.25 -->
+	<!-- 勤怠情報（受講生入力）未入力件数取得 -->
+	<select id="countUnfilledPastAttendance"
+		resultType="int">
+
+		SELECT COUNT(*)
+
+		FROM t_student_attendance
+
+		WHERE lms_user_id = #{lmsUserId}
+
+			AND delete_flg = #{deleteFlg}
+
+			AND cast(training_date AS DATE)
+				&lt; cast(#{currentDate} AS DATE)
+
+			AND (
+				training_start_time IS NULL
+				OR training_start_time = ''
+			)
+
+	</select>
+
+
+	<insert id="insert"
+		parameterType="jp.co.sss.lms.entity.TStudentAttendance"
+		useGeneratedKeys="true"
+		keyProperty="studentAttendanceId">
+
+		INSERT INTO t_student_attendance
 		(
 			lms_user_id,
 			training_date,
@@ -56,7 +107,9 @@
 			last_modified_user,
 			last_modified_date,
 			blank_time
-		) VALUES (
+		)
+		VALUES
+		(
 			#{lmsUserId},
 			#{trainingDate},
 			#{trainingStartTime},
@@ -71,10 +124,15 @@
 			#{lastModifiedDate},
 			#{blankTime}
 		)
+
 	</insert>
 
-	<update id="update" parameterType="jp.co.sss.lms.entity.TStudentAttendance">
+
+	<update id="update"
+		parameterType="jp.co.sss.lms.entity.TStudentAttendance">
+
 		UPDATE t_student_attendance
+
 		SET
 			training_start_time = #{trainingStartTime},
 			training_end_time = #{trainingEndTime},
@@ -83,7 +141,11 @@
 			last_modified_user = #{lastModifiedUser},
 			last_modified_date = #{lastModifiedDate},
 			blank_time = #{blankTime}
-		WHERE student_attendance_id = #{studentAttendanceId}
+
+		WHERE student_attendance_id =
+			#{studentAttendanceId}
+
 	</update>
+
 
 </mapper>

@@ -58,9 +58,12 @@ public interface TStudentAttendanceMapper {
 	 * @param currentDate
 	 * @return 未入力件数
 	 */
-	Integer countUnfilledPastAttendance(@Param("lmsUserId") Integer lmsUserId,
-			@Param("deleteFlg") Short deleteFlg, @Param("currentDate") String currentDate);
+	Integer countUnfilledPastAttendance(
+			@Param("lmsUserId") Integer lmsUserId,
+			@Param("deleteFlg") Short deleteFlg, 
+			@Param("currentDate") String currentDate);
 
+	
 	/**
 	 * 勤怠情報（受講生入力）登録
 	 * 

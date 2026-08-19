@@ -84,6 +84,7 @@ public class StudentAttendanceService {
 	/**
 	 * Task.25
 	 * 過去日の勤怠未入力チェック
+	 * ★★★★★★★★★★★★★
 	 *
 	 * @return 未入力が存在する場合true
 	 */
@@ -92,7 +93,6 @@ public class StudentAttendanceService {
 		// フォーマットパターンを設定し、現在日付を取得
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = simpleDateFormat.format(new Date());
-
 		// 過去日の未入力件数を取得
 		int unfilledCount = tStudentAttendanceMapper.countUnfilledPastAttendance(
 				loginUserDto.getLmsUserId(),
@@ -272,6 +272,12 @@ public class StudentAttendanceService {
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 
+		/** Task.26 時間・分の選択肢を設定
+		 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+		 */
+		attendanceForm.setHourMap(attendanceUtil.setHour());
+		attendanceForm.setMinuteMap(attendanceUtil.setMinute());
+
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
 			attendanceForm
@@ -302,6 +308,14 @@ public class StudentAttendanceService {
 				dailyAttendanceForm.setTrainingStartTimeMinute("");
 			}
 
+			/** Task.26 勤怠Utilを使用して出勤時間の時・分を設定
+			 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+			 */
+			dailyAttendanceForm.setTrainingStartTimeHour(
+					attendanceUtil.getHour(startTime));
+			dailyAttendanceForm.setTrainingStartTimeMinute(
+					attendanceUtil.getMinute(startTime));
+
 			// 退勤時間
 			// 退勤時間の分割設定
 			String endTime = attendanceManagementDto.getTrainingEndTime();
@@ -315,6 +329,12 @@ public class StudentAttendanceService {
 				dailyAttendanceForm.setTrainingEndTimeHour("");
 				dailyAttendanceForm.setTrainingEndTimeMinute("");
 			}
+
+			// Task.26 勤怠Utilを使用して退勤時間の時・分を設定
+			dailyAttendanceForm.setTrainingEndTimeHour(
+					attendanceUtil.getHour(endTime));
+			dailyAttendanceForm.setTrainingEndTimeMinute(
+					attendanceUtil.getMinute(endTime));
 
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());

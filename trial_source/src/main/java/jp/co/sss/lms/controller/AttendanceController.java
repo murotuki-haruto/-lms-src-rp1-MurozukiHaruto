@@ -46,13 +46,20 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(),loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList",attendanceManagementDtoList);
 
-		// Task.25
-		// 過去日の未入力チェック
+		
+		
+		/** Task.25
+		 * 過去日未入力チェック
+		 * 上のindexメソッド内に追加
+		 * ★★★★★★★★★★★★★★★
+		 */
 		boolean isUnfilledPast =studentAttendanceService.hasUnfilledPastAttendance();
 		model.addAttribute("isUnfilledPast",isUnfilledPast);
 
 		return "attendance/detail";
 	}
+	
+	
 
 	/**
 	 * 勤怠管理画面 『出勤』ボタン押下
@@ -130,6 +137,7 @@ public class AttendanceController {
 		for (int i = 0; i < 24; i++) {
 			hourList.add(String.format("%02d", i));
 		}
+
 		model.addAttribute("hourList", hourList);
 		// 「分」の選択肢（00〜59）
 		List<String> minuteList = new ArrayList<>();
@@ -137,6 +145,7 @@ public class AttendanceController {
 		for (int i = 0; i < 60; i++) {
 			minuteList.add(String.format("%02d", i));
 		}
+
 		model.addAttribute("minuteList", minuteList);
 		return "attendance/update";
 	}

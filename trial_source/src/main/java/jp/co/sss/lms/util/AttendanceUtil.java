@@ -52,24 +52,30 @@ public class AttendanceUtil {
 				|| workEndTime.isBlank()) {
 			return AttendanceStatusEnum.NONE;
 		}
+
 		boolean isLate = false, isEarly = false;
 		// 定時より1分以上遅く出社していたら遅刻(＝はセーフ)
 		if (trainingStartTime != null && trainingStartTime.isNotBlank()) {
 			isLate = (trainingStartTime.compareTo(workStartTime) > 0);
 		}
+
 		// 定時より1分以上早く退社していたら早退(＝はセーフ)
 		if (trainingEndTime != null && trainingEndTime.isNotBlank()) {
 			isEarly = (trainingEndTime.compareTo(workEndTime) < 0);
 		}
+
 		if (isLate && isEarly) {
 			return AttendanceStatusEnum.TARDY_AND_LEAVING_EARLY;
 		}
+
 		if (isLate) {
 			return AttendanceStatusEnum.TARDY;
 		}
+
 		if (isEarly) {
 			return AttendanceStatusEnum.LEAVING_EARLY;
 		}
+
 		return AttendanceStatusEnum.NONE;
 	}
 
@@ -133,6 +139,81 @@ public class AttendanceUtil {
 	}
 
 	/**
+	 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+	 * Task.26
+	 * 時間の選択肢を取得
+	 *
+	 * @return 時間の選択肢
+	 */
+	public LinkedHashMap<String, String> setHour() {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		map.put("", "");
+
+		for (int i = 0; i < 24; i++) {
+			String hour = String.format("%02d", i);
+			map.put(hour, hour);
+		}
+
+		return map;
+	}
+
+	/**
+	 * ★★★★★★★★★★★★★★★★★★★★★★★
+	 * Task.26
+	 * 分の選択肢を取得
+	 *
+	 * @return 分の選択肢
+	 */
+	public LinkedHashMap<String, String> setMinute() {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		map.put("", "");
+
+		for (int i = 0; i < 60; i++) {
+			String minute = String.format("%02d", i);
+			map.put(minute, minute);
+		}
+
+		return map;
+	}
+
+	/**
+	 * Task.26
+	 * 時刻から時間を取得
+	 *
+	 * @param time 時刻
+	 * @return 時間
+	 */
+	public String getHour(String time) {
+		if (time == null || time.isEmpty() || !time.contains(":")) {
+			return "";
+		}
+
+		String[] timeArray = time.split(":");
+
+		return timeArray[0];
+	}
+
+	/**
+	 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+	 * Task.26
+	 * 時刻から分を取得
+	 *
+	 * @param time 時刻
+	 * @return 分
+	 */
+	public String getMinute(String time) {
+		if (time == null || time.isEmpty() || !time.contains(":")) {
+			return "";
+		}
+
+		String[] timeArray = time.split(":");
+
+		return timeArray[1];
+	}
+
+	/**
 	 * 研修日の判定
 	 * 
 	 * @param courseId
@@ -144,6 +225,7 @@ public class AttendanceUtil {
 		if (count > 0) {
 			return true;
 		}
+
 		return false;
 	}
 

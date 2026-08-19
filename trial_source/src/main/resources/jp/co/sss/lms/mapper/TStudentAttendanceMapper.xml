@@ -69,22 +69,17 @@
 		resultType="int">
 
 		SELECT COUNT(*)
-
 		FROM t_student_attendance
-
 		WHERE lms_user_id = #{lmsUserId}
-
 			AND delete_flg = #{deleteFlg}
-
 			AND cast(training_date AS DATE)
 				&lt; cast(#{currentDate} AS DATE)
-
 			AND (
 				training_start_time IS NULL
 				OR training_start_time = ''
 			)
-
 	</select>
+	  <!-- /Task.25 -->
 
 
 	<insert id="insert"

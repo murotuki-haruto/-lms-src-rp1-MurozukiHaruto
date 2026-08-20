@@ -48,10 +48,11 @@ public class AttendanceController {
 
 		
 		
-		/** Task.25
-		 * 過去日未入力チェック
-		 * 上のindexメソッド内に追加
-		 * ★★★★★★★★★★★★★★★
+		/**★★★★★★★★★★★★★★★★★★★★★★★
+		 * ヘッダーから「勤怠」を押下
+	     * @author 室月 陽翔 -Task.25
+		 * @param model モデル
+		 * @return 勤怠管理画面
 		 */
 		boolean isUnfilledPast =studentAttendanceService.hasUnfilledPastAttendance();
 		model.addAttribute("isUnfilledPast",isUnfilledPast);

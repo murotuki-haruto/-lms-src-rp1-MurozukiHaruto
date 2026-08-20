@@ -63,21 +63,26 @@
 	</select>
 
 
-	<!-- Task.25 -->
-	<!-- 勤怠情報（受講生入力）未入力件数取得 -->
+		<!-- 室月 陽翔  -Task.25 -->
 	<select id="countUnfilledPastAttendance"
-		resultType="int">
+		resultType="java.lang.Integer">
 
-		SELECT COUNT(*)
-		FROM t_student_attendance
-		WHERE lms_user_id = #{lmsUserId}
+		SELECT
+			COUNT(*)
+		FROM
+			t_student_attendance
+		WHERE
+			lms_user_id = #{lmsUserId}
 			AND delete_flg = #{deleteFlg}
-			AND cast(training_date AS DATE)
-				&lt; cast(#{currentDate} AS DATE)
+			AND CAST(training_date AS DATE) &lt; CAST(#{trainingDate} AS DATE)
+			AND status != 1
 			AND (
-				training_start_time IS NULL
-				OR training_start_time = ''
+				training_start_time = ''
+				OR training_end_time = ''
+				OR training_start_time IS NULL
+				OR training_end_time IS NULL
 			)
+
 	</select>
 	  <!-- /Task.25 -->
 

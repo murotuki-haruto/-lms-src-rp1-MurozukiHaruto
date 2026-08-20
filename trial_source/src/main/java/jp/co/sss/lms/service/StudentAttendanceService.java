@@ -81,23 +81,21 @@ public class StudentAttendanceService {
 		return attendanceManagementDtoList;
 	}
 
-	/**
-	 * Task.25
-	 * 過去日の勤怠未入力チェック
-	 * ★★★★★★★★★★★★★
-	 *
+	/**★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+	 * ヘッダーから「勤怠」を押下
+	 * @author 室月 陽翔 -Task.25
 	 * @return 未入力が存在する場合true
 	 */
 	public boolean hasUnfilledPastAttendance() {
 
 		// フォーマットパターンを設定し、現在日付を取得
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		String currentDate = simpleDateFormat.format(new Date());
+		String trainingDate = simpleDateFormat.format(new Date());
+
 		// 過去日の未入力件数を取得
-		int unfilledCount = tStudentAttendanceMapper.countUnfilledPastAttendance(
-				loginUserDto.getLmsUserId(),
+		int unfilledCount = tStudentAttendanceMapper.countUnfilledPastAttendance(loginUserDto.getLmsUserId(),
 				Constants.DB_FLG_FALSE,
-				currentDate);
+				trainingDate);
 
 		return unfilledCount > 0;
 	}

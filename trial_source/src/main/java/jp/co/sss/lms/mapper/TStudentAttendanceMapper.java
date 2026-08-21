@@ -50,13 +50,16 @@ public interface TStudentAttendanceMapper {
 			@Param("lmsUserId") Integer lmsUserId, @Param("deleteFlg") Short deleteFlg);
 
 	/**
-	 * 室月 陽翔 - Task.25
+	 * @author 室月 陽翔 - Task.25
 	 * @param lmsUserId LMSユーザーID
 	 * @param deleteFlg 削除フラグ
 	 * @param trainingDate 日付
 	 * @return 未入力件数
 	 */
-	Integer countUnfilledPastAttendance(
+	
+	// Serviceから受け取ったLMSユーザーID・削除フラグ・日付を、
+	// Mapper.xmlで使用できるように@Paramで名前を付け、未入力件数を取得する
+	Integer notEnterCount(
 			@Param("lmsUserId") Integer lmsUserId,
 			@Param("deleteFlg") Short deleteFlg,
 			@Param("trainingDate") String trainingDate);

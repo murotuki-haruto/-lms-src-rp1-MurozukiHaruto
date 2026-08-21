@@ -54,8 +54,12 @@ public class AttendanceController {
 		 * @param model モデル
 		 * @return 勤怠管理画面
 		 */
-		boolean isUnfilledPast =studentAttendanceService.hasUnfilledPastAttendance();
-		model.addAttribute("isUnfilledPast",isUnfilledPast);
+		
+		//未入力が有るか、無いかをboolean型で取得、
+		//「UnfilledPast」にService処理の結果(ture or false)を代入
+		boolean UnfilledPast = studentAttendanceService.hasUnfilledPastAttendance();
+		//スコープで判定結果を格納
+		model.addAttribute("isUnfilledPast",UnfilledPast);
 
 		return "attendance/detail";
 	}

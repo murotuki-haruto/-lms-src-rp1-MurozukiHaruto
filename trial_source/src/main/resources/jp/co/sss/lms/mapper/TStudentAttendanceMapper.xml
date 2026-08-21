@@ -63,8 +63,14 @@
 	</select>
 
 
-		<!-- 室月 陽翔  -Task.25 -->
-	<select id="countUnfilledPastAttendance"
+
+
+		<!-- 室月 陽翔 - Task.25 -->
+    <!--
+	ログイン中のLMSユーザーID・削除フラグ・現在日付を条件に、
+	過去日の勤怠で、欠席以外かつ出勤時間または退勤時間が未入力の件数を取得
+    -->
+	<select id="notEnterCount"
 		resultType="java.lang.Integer">
 
 		SELECT
@@ -72,11 +78,17 @@
 		FROM
 			t_student_attendance
 		WHERE
+		
+		    <!-- ログイン中の受講者本人に絞る -->>
 			lms_user_id = #{lmsUserId}
-			AND delete_flg = #{deleteFlg}
+			<!-- 削除されていない有効データに絞る -->>
+			AND delete_flg = #{deleteFlg} 
+			<!-- 今日より前の日付に絞る-->>
 			AND CAST(training_date AS DATE) &lt; CAST(#{trainingDate} AS DATE)
+			<!-- ステータスが欠席の場合を除外 -->>
 			AND status != 1
 			AND (
+			    <!-- 出勤時間または退勤時間が未入力のデータを抽出する条件 -->
 				training_start_time = ''
 				OR training_end_time = ''
 				OR training_start_time IS NULL
@@ -85,6 +97,8 @@
 
 	</select>
 	  <!-- /Task.25 -->
+	  
+	  
 
 
 	<insert id="insert"

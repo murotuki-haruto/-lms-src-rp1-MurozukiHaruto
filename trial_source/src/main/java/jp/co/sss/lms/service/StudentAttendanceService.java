@@ -81,10 +81,13 @@ public class StudentAttendanceService {
 		return attendanceManagementDtoList;
 	}
 
-	/**★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-	 * ヘッダーから「勤怠」を押下
-	 * @author 室月 陽翔 -Task.25
-	 * @return 未入力が存在する場合true
+	/**
+	 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★
+	 * @author 室月 陽翔 - Task.25
+	 * @param lmsUserId LMSユーザーID
+	 * @param deleteFlg 削除フラグ
+	 * @param trainingDate 日付
+	 * @return 未入力件数
 	 */
 	public boolean hasUnfilledPastAttendance() {
 
@@ -92,11 +95,12 @@ public class StudentAttendanceService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String trainingDate = simpleDateFormat.format(new Date());
 
-		// 過去日の未入力件数を取得
-		int unfilledCount = tStudentAttendanceMapper.countUnfilledPastAttendance(loginUserDto.getLmsUserId(),
-				Constants.DB_FLG_FALSE,
-				trainingDate);
-
+		// ログイン中のLMSユーザーID、削除フラグ0、現在日付を引数として渡し、
+		// 過去日の勤怠未入力件数を取得して「unfilledCount」に代入
+		int unfilledCount = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(),
+				Constants.DB_FLG_FALSE,trainingDate);
+		
+		//判定し戻り値がboolean型なので、未入力件数が0より大きければ、ture 小さければ、false
 		return unfilledCount > 0;
 	}
 

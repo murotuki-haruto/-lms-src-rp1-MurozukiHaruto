@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
@@ -81,14 +82,15 @@ public class StudentAttendanceService {
 		return attendanceManagementDtoList;
 	}
 
-	/**
-	 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★
+   /**
+     *ヘッダーから「勤怠」を押下
 	 * @author 室月 陽翔 - Task.25
 	 * @param lmsUserId LMSユーザーID
 	 * @param deleteFlg 削除フラグ
 	 * @param trainingDate 日付
-	 * @return 未入力件数
+	 * @return 未入力件数の判定結果
 	 */
+	
 	public boolean hasUnfilledPastAttendance() {
 
 		// フォーマットパターンを設定し、現在日付を取得
@@ -477,4 +479,110 @@ public class StudentAttendanceService {
 		// 完了メッセージ
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
+	
+	/**
+	 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★
+	 * @author 室月 陽翔 - Task.27
+	 * 勤怠入力チェック
+	 *
+	 * @param attendanceForm 勤怠編集フォーム
+	 * @param result 入力チェック結果
+	 */
+	public void updateInputCheck(AttendanceForm attendanceForm,BindingResult result) {
+
+		// 日次勤怠フォームごとに入力チェック
+		for (int i = 0; i < attendanceForm.getAttendanceList().size(); i++) {
+
+			DailyAttendanceForm dailyAttendanceForm =attendanceForm.getAttendanceList().get(i);
+
+			// 備考の文字数が100文字を超える場合
+			if (dailyAttendanceForm.getNote() != null
+					&& dailyAttendanceForm.getNote().length() > 100) {
+
+				result.reject("maxlength",
+						new Object[] {"備考","100"},
+						null);
+			}
+
+			// 出勤時間の時・分を取得
+			String trainingStartTimeHour =dailyAttendanceForm.getTrainingStartTimeHour();
+			String trainingStartTimeMinute =dailyAttendanceForm.getTrainingStartTimeMinute();
+
+			// 退勤時間の時・分を取得
+			String trainingEndTimeHour =dailyAttendanceForm.getTrainingEndTimeHour();
+			String trainingEndTimeMinute =dailyAttendanceForm.getTrainingEndTimeMinute();
+
+			// 出勤時間の時・分が入力されているか判定
+			boolean startHourInput =trainingStartTimeHour != null
+					&& !trainingStartTimeHour.isEmpty();
+			boolean startMinuteInput =trainingStartTimeMinute != null
+					&& !trainingStartTimeMinute.isEmpty();
+
+			// 退勤時間の時・分が入力されているか判定
+			boolean endHourInput =trainingEndTimeHour != null
+					&& !trainingEndTimeHour.isEmpty();
+			boolean endMinuteInput =trainingEndTimeMinute != null
+					&& !trainingEndTimeMinute.isEmpty();
+
+			// 出勤時間の時・分の片方のみ入力されている場合
+			if (startHourInput != startMinuteInput) {
+
+				result.reject("input.invalid",
+						new Object[] {"出勤時間"},
+						null);
+			}
+
+			// 退勤時間の時・分の片方のみ入力されている場合
+			if (endHourInput != endMinuteInput) {
+
+				result.reject("input.invalid",
+						new Object[] {"退勤時間"},
+						null);
+			}
+
+			// 出勤時間、退勤時間が正しく入力されているか判定
+			boolean startTimeInput =startHourInput && startMinuteInput;
+			boolean endTimeInput =endHourInput && endMinuteInput;
+
+			// 出勤時間に入力なし、退勤時間に入力ありの場合
+			if (!startHourInput && !startMinuteInput && endTimeInput) {
+
+				result.reject("attendance.punchInEmpty");
+			}
+
+			// 出勤時間と退勤時間が両方正しく入力されている場合
+			if (startTimeInput && endTimeInput) {
+
+				TrainingTime trainingStartTime =new TrainingTime(
+						trainingStartTimeHour + ":" + trainingStartTimeMinute);
+				TrainingTime trainingEndTime =new TrainingTime(
+						trainingEndTimeHour + ":" + trainingEndTimeMinute);
+
+				// 出勤時間が退勤時間より後の場合
+				if (trainingStartTime.compareTo(trainingEndTime) > 0) {
+
+					result.reject("attendance.trainingTimeRange",
+							new Object[] {i},
+							null);
+				}
+
+				// 中抜け時間が勤務時間を超える場合
+				if (trainingStartTime.compareTo(trainingEndTime) <= 0
+						&& dailyAttendanceForm.getBlankTime() != null) {
+
+					int startMinute =Integer.parseInt(trainingStartTimeHour) * 60
+							+ Integer.parseInt(trainingStartTimeMinute);
+					int endMinute =Integer.parseInt(trainingEndTimeHour) * 60
+							+ Integer.parseInt(trainingEndTimeMinute);
+					int trainingTime =endMinute - startMinute;
+
+					if (dailyAttendanceForm.getBlankTime() > trainingTime) {
+
+						result.reject("attendance.blankTimeError");
+					}
+				}
+			}
+		}
+	}
+
 }

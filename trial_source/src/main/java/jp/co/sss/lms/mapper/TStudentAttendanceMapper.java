@@ -53,7 +53,7 @@ public interface TStudentAttendanceMapper {
 	 * @author 室月 陽翔 - Task.25
 	 * @param lmsUserId LMSユーザーID
 	 * @param deleteFlg 削除フラグ
-	 * @param trainingDate 日付
+	 * @param trainingDate 今日の日付
 	 * @return 未入力件数
 	 */
 	

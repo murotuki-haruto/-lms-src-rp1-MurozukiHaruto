@@ -18,6 +18,18 @@
 		</th:block>
 	</th:block>
 
+	<!-- 室月 陽翔 - Task.27 -->
+	<!-- 入力チェックエラー表示 -->
+	<th:block th:object="${attendanceForm}">
+		<th:block th:if="${#fields.hasErrors('*')}">
+			<ul style="padding-left: 0; list-style: none;">
+				<li th:each="err : ${#fields.errors('*')}">
+					<span th:text="'* ' + ${err}" class="help-inline error"></span>
+				</li>
+			</ul>
+		</th:block>
+	</th:block>
+
 	<div class="row">
 		<div class="bs-component col-sm-12">
 
@@ -110,6 +122,20 @@
 			</form>
 		</div>
 	</div>
+
+	<!-- 室月 陽翔 - Task.27 -->
+	<!-- 更新確認ダイアログ -->
+	<script type="text/javascript">
+		$(function() {
+
+			$("input[name='complete']").click(function() {
+
+				return confirm("更新します。よろしいですか？");
+
+			});
+
+		});
+	</script>
 
 </body>
 </html>

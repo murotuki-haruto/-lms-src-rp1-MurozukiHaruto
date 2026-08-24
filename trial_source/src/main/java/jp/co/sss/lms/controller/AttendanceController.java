@@ -15,6 +15,7 @@ import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
 import jp.co.sss.lms.service.StudentAttendanceService;
+import jp.co.sss.lms.util.AttendanceUtil;
 import jp.co.sss.lms.util.Constants;
 
 /**
@@ -31,6 +32,9 @@ public class AttendanceController {
 
 	@Autowired
 	private LoginUserDto loginUserDto;
+
+	@Autowired
+	private AttendanceUtil attendanceUtil;
 
 	/**
 	 * 勤怠管理画面 初期表示
@@ -165,8 +169,42 @@ public class AttendanceController {
 	 * @throws ParseException
 	 */
 	@RequestMapping(path = "/update",params = "complete",method = RequestMethod.POST)
-	public String complete(AttendanceForm attendanceForm,Model model,BindingResult result)
+	public String complete(AttendanceForm attendanceForm,BindingResult result,Model model)
 			throws ParseException {
+
+		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★
+		// 室月 陽翔 - Task.27
+		// 勤怠入力チェック
+		studentAttendanceService.updateInputCheck(attendanceForm,result);
+
+		// 入力エラーがある場合
+		if (result.hasErrors()) {
+
+			// 中抜け時間・時間・分の選択肢を再設定
+			attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
+			attendanceForm.setHourMap(attendanceUtil.setHour());
+			attendanceForm.setMinuteMap(attendanceUtil.setMinute());
+
+			// 「時」の選択肢（00〜23）
+			List<String> hourList = new ArrayList<>();
+
+			for (int i = 0; i < 24; i++) {
+				hourList.add(String.format("%02d", i));
+			}
+
+			model.addAttribute("hourList", hourList);
+
+			// 「分」の選択肢（00〜59）
+			List<String> minuteList = new ArrayList<>();
+
+			for (int i = 0; i < 60; i++) {
+				minuteList.add(String.format("%02d", i));
+			}
+
+			model.addAttribute("minuteList", minuteList);
+
+			return "attendance/update";
+		}
 
 		// 更新
 		String message =studentAttendanceService.update(attendanceForm);

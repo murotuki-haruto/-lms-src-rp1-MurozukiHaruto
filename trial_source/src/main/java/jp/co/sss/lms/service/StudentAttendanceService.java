@@ -91,18 +91,20 @@ public class StudentAttendanceService {
 	 * @return 未入力件数の判定結果
 	 */
 	
-	public boolean hasUnfilledPastAttendance() {
+	public boolean notEnterCheck() throws ParseException {
 
-		// フォーマットパターンを設定し、現在日付を取得
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		String trainingDate = simpleDateFormat.format(new Date());
+		// SimpleDateFormatクラスでフォーマットパターンを設定し、現在日付を取得する
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String formattedDate = sdf.format(new Date());
+		Date trainingDate = sdf.parse(formattedDate);
 
-		// ログイン中のLMSユーザーID、削除フラグ0、現在日付を引数として渡し、
 		// 過去日の勤怠未入力件数を取得して「unfilledCount」に代入
-		int unfilledCount = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(),
-				Constants.DB_FLG_FALSE,trainingDate);
-		
-		//判定し戻り値がboolean型なので、未入力件数が0より大きければ、ture 小さければ、false
+		int unfilledCount = tStudentAttendanceMapper.notEnterCount(
+				loginUserDto.getLmsUserId(),
+				Constants.DB_FLG_FALSE,
+				trainingDate);
+
+		// 未入力件数が0より大きければtrue
 		return unfilledCount > 0;
 	}
 

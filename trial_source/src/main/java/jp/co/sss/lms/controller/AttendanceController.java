@@ -43,7 +43,7 @@ public class AttendanceController {
 	 * @return 勤怠管理画面
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model) throws ParseException {
 
 		// 勤怠一覧の取得
 		List<AttendanceManagementDto> attendanceManagementDtoList =studentAttendanceService
@@ -51,19 +51,18 @@ public class AttendanceController {
 		model.addAttribute("attendanceManagementDtoList",attendanceManagementDtoList);
 
 		
+		//ヘッダの勤怠項目を押下
+		//@author 室月 陽翔 -Task.25
+		//@param  modele
+		//@return 勤怠管理画面
+		//@throw  ParseException
 		
-		/**★★★★★★★★★★★★★★★★★★★★★★★
-		 * ヘッダーから「勤怠」を押下
-	     * @author 室月 陽翔 -Task.25
-		 * @param model モデル
-		 * @return 勤怠管理画面
-		 */
 		
-		//未入力が有るか、無いかをboolean型で取得、
-		//「UnfilledPast」にService処理の結果(ture or false)を代入
-		boolean UnfilledPast = studentAttendanceService.hasUnfilledPastAttendance();
-		//スコープで判定結果を格納
-		model.addAttribute("isUnfilledPast",UnfilledPast);
+		// 未入力が有るか、無いかをboolean型で取得、
+		// 「UnfilledPast」にService処理の結果(true or false)を代入
+		boolean isUnfilledPast =studentAttendanceService.notEnterCheck();
+		// スコープで判定結果を格納
+		model.addAttribute("isUnfilledPast",isUnfilledPast);
 
 		return "attendance/detail";
 	}
@@ -87,7 +86,6 @@ public class AttendanceController {
 			String message =studentAttendanceService.setPunchIn();
 			model.addAttribute("message", message);
 		}
-
 		// 一覧の再取得
 		List<AttendanceManagementDto> attendanceManagementDtoList =studentAttendanceService
 				.getAttendanceManagement(loginUserDto.getCourseId(),loginUserDto.getLmsUserId());

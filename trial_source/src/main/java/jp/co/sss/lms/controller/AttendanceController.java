@@ -52,10 +52,10 @@ public class AttendanceController {
 
 		
 		//ヘッダの勤怠項目を押下
-		//@author 室月 陽翔 -Task.25
-		//@param  modele
-		//@return 勤怠管理画面
-		//@throw  ParseException
+		//室月 陽翔 -Task.25
+		//modele
+		//勤怠管理画面
+		//ParseException
 		
 		
 		// 未入力が有るか、無いかをboolean型で取得、

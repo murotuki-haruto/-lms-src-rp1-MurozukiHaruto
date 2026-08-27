@@ -1,3 +1,6 @@
+# update.html
+
+```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
@@ -63,6 +66,11 @@
 								<!-- 出勤（横並びレイアウト） -->
 								<td style="white-space: nowrap;">
 									<div style="display: flex; align-items: center; gap: 4px;">
+
+										<!-- 室月 陽翔 - Task.28 -->
+										<!-- 定時ボタン -->
+										<button type="button" class="btn btn-success regularTime" th:data-index="${stat.index}">定時</button>
+
 										<span th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingStartTimeHour')} ? 'has-error'">
 											<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|" class="form-control" style="width: 60px; display: inline-block;">
 												<option value="">--</option>
@@ -84,7 +92,7 @@
 								<!-- 退勤（横並びレイアウト） -->
 								<td style="white-space: nowrap;">
 									<div style="display: flex; align-items: center; gap: 4px;">
-										<span th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTimeHour') or #fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTime')} ? 'has-error'">
+										<span th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTimeHour')} ? 'has-error'">
 											<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|" class="form-control" style="width: 60px; display: inline-block;">
 												<option value="">--</option>
 												<option th:each="h : ${hourList}" th:value="${h}" th:text="${h}"
@@ -92,7 +100,7 @@
 											</select>
 										</span>
 										<span>:</span>
-										<span th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTimeMinute') or #fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTime')} ? 'has-error'">
+										<span th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTimeMinute')} ? 'has-error'">
 											<select th:name="|attendanceList[${stat.index}].trainingEndTimeMinute|" class="form-control" style="width: 60px; display: inline-block;">
 												<option value="">--</option>
 												<option th:each="m : ${minuteList}" th:value="${m}" th:text="${m}"
@@ -112,9 +120,7 @@
 								</td>
 								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
 								<td class="w240">
-									<span th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].note')} ? 'has-error'">
-										<input type="text" th:name="|attendanceList[${stat.index}].note|" th:value="${dailyAttendanceForm.note}" class="form-control" />
-									</span>
+									<input type="text" th:name="|attendanceList[${stat.index}].note|" th:value="${dailyAttendanceForm.note}" class="form-control" />
 								</td>
 							</tr>
 						</th:block>
@@ -149,5 +155,26 @@
 		});
 	</script>
 
+	<!-- 室月 陽翔 - Task.28 -->
+	<!-- 定時ボタン押下 -->
+	<script type="text/javascript">
+		$(function() {
+
+			$(".regularTime").click(function() {
+
+				var index = $(this).data("index");
+
+				$("select[name='attendanceList[" + index + "].trainingStartTimeHour']").val("09");
+				$("select[name='attendanceList[" + index + "].trainingStartTimeMinute']").val("00");
+
+				$("select[name='attendanceList[" + index + "].trainingEndTimeHour']").val("18");
+				$("select[name='attendanceList[" + index + "].trainingEndTimeMinute']").val("00");
+
+			});
+
+		});
+	</script>
+
 </body>
 </html>
+```

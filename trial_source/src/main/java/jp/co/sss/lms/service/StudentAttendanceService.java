@@ -278,9 +278,12 @@ public class StudentAttendanceService {
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 
-		/** Task.26 時間・分の選択肢を設定
-		 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-		 */
+		 
+	     //勤怠管理画面から勤怠情報を直接編集する、を押下
+		 //室月 陽翔 - Task.26
+		 //attendanceUtil.setHour
+		 //時間・分をセレクトボックス
+		
 		attendanceForm.setHourMap(attendanceUtil.setHour());
 		attendanceForm.setMinuteMap(attendanceUtil.setMinute());
 
@@ -314,9 +317,7 @@ public class StudentAttendanceService {
 				dailyAttendanceForm.setTrainingStartTimeMinute("");
 			}
 
-			/** Task.26 勤怠Utilを使用して出勤時間の時・分を設定
-			 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-			 */
+			//Task.26 勤怠Utilを使用して出勤時間の時・分を設定
 			dailyAttendanceForm.setTrainingStartTimeHour(
 					attendanceUtil.getHour(startTime));
 			dailyAttendanceForm.setTrainingStartTimeMinute(
@@ -483,10 +484,8 @@ public class StudentAttendanceService {
 	}
 	
 	/**
-	 * ★★★★★★★★★★★★★★★★★★★★★★★★★★★
-	 * @author 室月 陽翔 - Task.27
-	 * 勤怠入力チェック
-	 *
+	 * 勤怠直接変更画面、入力チェック
+	 * @author h-murotsuki室月 陽翔 - Task.27
 	 * @param attendanceForm 勤怠編集フォーム
 	 * @param result 入力チェック結果
 	 */

@@ -170,9 +170,11 @@ public class AttendanceController {
 	public String complete(AttendanceForm attendanceForm,BindingResult result,Model model)
 			throws ParseException {
 
-		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★
-		// 室月 陽翔 - Task.27
-		// 勤怠入力チェック
+		//勤怠管理画面 『勤怠情報を直接編集する』リンク押下
+		//室月 陽翔 -Task.27
+		//modele
+		//勤怠直接変更画面
+		
 		studentAttendanceService.updateInputCheck(attendanceForm,result);
 
 		// 入力エラーがある場合
